@@ -31,7 +31,6 @@ const emailRegistro = async (datos) => {
     console.log(error);
   })
 
-  console.log("Mensaje enviado: %s,", info.messageId);
 };
 
 export default emailRegistro;

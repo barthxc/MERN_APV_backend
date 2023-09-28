@@ -29,8 +29,6 @@ const emailOlvidePassword = async (datos) =>{
     .catch((error)=>{
       console.log(error);
     })
-
-    console.log('Mensaje enviado: %s,', info.messageId);
     
 }
 
