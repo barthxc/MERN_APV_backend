@@ -1,34 +1,37 @@
-import nodemailer from 'nodemailer';
+
+import sgMail from '@sendgrid/mail'
 
 
-const emailRegistro = async (datos) =>{
-    const  transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port:  process.env.EMAIL_PORT,
-        auth: {
-          user:  process.env.EMAIL_USER,
-          pass:  process.env.EMAIL_PASS
-        }
-      });
 
-    const {email, nombre, token} = datos;
-    //Enviar email
 
-    const info = await transporter.sendMail({
-        from: 'APV- Administrador de Pacientes de Veterinaria <apv@correo.com>',
-        to: email,
-        subject: 'Comprueba tu cuenta en APV',
-        text: 'comprueba tu cuenta en APV',
-        html:`
+const emailRegistro = async (datos) => {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+  const { email, nombre, token } = datos;
+  //Enviar email
+
+  const info = await ({
+    to: email,
+    from: "pbartgal@myuax.com",
+    subject: "Comprueba tu cuenta en APV",
+    text: "comprueba tu cuenta en APV",
+    html: `
         <p>Hola ${nombre}, has creado una cuenta en APV.
         <p> Tu cuenta ya está lista, para confirmarla haz click en el enlace:
         <a href="${process.env.FRONTEND_URL}/confirmar/${token}">Confirmar cuenta</a> </p>
         <p>Si tu no creaste esta cuenta, ignora este mensaje.</p>
-        `
-    });
+        `,
+  });
 
-    console.log('Mensaje enviado: %s,', info.messageId);
-    
-}
+  sgMail.send(info)
+  .then(()=>{
+    console.log('Email enviado');
+  })
+  .catch((error)=>{
+    console.log(error);
+  })
+
+  console.log("Mensaje enviado: %s,", info.messageId);
+};
 
 export default emailRegistro;
