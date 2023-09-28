@@ -1,35 +1,29 @@
+import sgMail from '@sendgrid/mail';
 
-import sgMail from '@sendgrid/mail'
+const emailOlvidePassword = async (datos) => {
+  try {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-
-const emailOlvidePassword = async (datos) =>{
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
-
-    const {email, nombre, token} = datos;
+    const { email, nombre, token } = datos;
     //Enviar email
 
-    const info = await ({
-        to: email,
-        from: "pbartgal@myuax.com",
-        subject: 'Reestablece tu Password',
-        text: 'Reestablece tu Password',
-        html:`
-        <p>Hola ${nombre}, has solicitado reestablecer tu password.
-        <p> Sigue el siguiente enlace para generar tu nuevo password:
-        <a href="${process.env.FRONTEND_URL}/olvide-password/${token}">Reestablecer Password</a> </p>
+    const info = await sgMail.send({
+      to: email,
+      from: "pbartgal@myuax.com",
+      subject: 'Reestablece tu Password',
+      text: 'Reestablece tu Password',
+      html: `
+        <p>Hola ${nombre}, has solicitado reestablecer tu password.</p>
+        <p>Sigue el siguiente enlace para generar tu nuevo password:
+        <a href="${process.env.FRONTEND_URL}/olvide-password/${token}">Reestablecer Password</a></p>
         <p>Si tu no creaste esta cuenta, ignora este mensaje.</p>
-        `
+      `
     });
 
-    sgMail.send(info)
-    .then(()=>{
-      console.log('Email enviado');
-    })
-    .catch((error)=>{
-      console.log(error);
-    })
-    
+    console.log('Email enviado:', info);
+  } catch (error) {
+    console.error('Error al enviar el email:', error);
+  }
 }
 
 export default emailOlvidePassword;
